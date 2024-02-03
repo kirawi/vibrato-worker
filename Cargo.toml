@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-vibrato = "0.5.1"
+vibrato = { path = "./vibrato" }
 serde = "1"
 serde_json = { version = "1", features = ["std"] }
 ruzstd = "0.5.0"
@@ -16,3 +16,12 @@ anyhow = { version = "1", features = ["backtrace"] }
 log = "0.4"
 humantime = "2.1"
 fern = "0.6"
+
+memmap2 = "0.9"
+
+# itertools = "0.12"
+# phf = { version = "0.11", features = ["macros"] }
+
+[profile.release]
+codegen-units = 1
+lto = true

@@ -1,0 +1,30 @@
+[package]
+name = "vibrato"
+# NOTE(kampersanda): Developers should check compatibility with MODEL_MAGIC in dictionary.rs.
+version = "0.5.1"
+edition = "2021"
+rust-version = "1.70"
+authors = [
+    "Shunsuke Kanda <shnsk.knd@gmail.com>",
+    "Koichi Akabe <vbkaisetsu@gmail.com>",
+]
+description = "Vibrato: viterbi-based accelerated tokenizer"
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/daac-tools/vibrato"
+repository = "https://github.com/daac-tools/vibrato"
+readme = "README.md"
+keywords = ["japanese", "analyzer", "tokenizer", "morphological"]
+categories = ["text-processing"]
+
+[dependencies]
+bincode = { version = "2.0.0-rc.3", default-features = false, features = ["std", "alloc", "derive"] }  # MIT
+crawdad = "0.3.0" # MIT or Apache-2.0
+csv-core = "0.1.10" # Unlicense or MIT
+hashbrown = "0.12" # MIT or Apache-2.0
+regex = "1" # MIT or Apache-2.0
+rucrf = { version = "0.3.2", optional = true } # MIT or Apache-2.0
+
+[features]
+default = ["train"]
+
+train = ["rucrf"]
