@@ -223,9 +223,7 @@ fn do_stuff() -> anyhow::Result<()> {
     setup_logger().unwrap();
     log::info!("Beginning...");
 
-    let dict = PathBuf::from(String::from(
-        "./system.dic.zst",
-    ));
+    let dict = PathBuf::from(String::from("./system.dic.zst"));
     let mut worker = VibratoWorker::create(dict)?;
 
     let mut sin = stdin().lock();
