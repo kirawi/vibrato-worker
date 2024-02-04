@@ -50,7 +50,6 @@ impl VibratoWorker {
         });
         let tokens = self.borrow_inner().token_iter();
         let mut out = Vec::new();
-        out.push(json!({"source": s}));
         for tk in tokens {
             const DATA: &[&str] = &[
                 "pos",
@@ -75,31 +74,31 @@ impl VibratoWorker {
                     Some(t.to_string())
                 }
             });
-            let mut value = vec![("source".to_string(), Some(surface.to_string()))];
-            value.extend(
-                DATA.into_iter()
-                    .map(ToString::to_string)
-                    .zip(info)
-                    .collect::<Vec<(String, Option<String>)>>(),
-            );
-            out.push(serde_json::to_value(&value)?);
+            let mut map = serde_json::Map::new();
+            map.insert("source".to_string(), json!(surface));
+            DATA.into_iter()
+                .map(ToString::to_string)
+                .zip(info)
+                .for_each(|(k, v)| {
+                    map.insert(k, json!(v));
+                });
+            out.push(serde_json::to_value(&map)?);
         }
         Ok(out)
     }
 
-    fn tokenize_lines(&mut self, s: &str) -> Result<Vec<Value>> {
+    fn tokenize_lines(&mut self, s: &str) -> Result<Vec<Vec<Value>>> {
         let mut res = Vec::new();
         for line in s.lines() {
-            // const SKIP_PAT: &'static str = r"[\s\u30fb]";
-            // let a_reg = Regex::new(SKIP_PAT)?;
-            // let n_reg = Regex::new(&format!(r"{0}|.*?(?={0})|.*", SKIP_PAT))?;
+            let mut out = Vec::new();
             for part in split_words(line) {
                 if part.trim().is_empty() {
-                    res.push(generate_dummy_data(part));
+                    out.push(generate_dummy_data(part));
                     continue;
                 }
-                res.extend(self.tokenize(part)?);
+                out.extend(self.tokenize(part)?);
             }
+            res.push(out);
         }
         Ok(res)
     }
