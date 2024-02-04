@@ -5,7 +5,7 @@ use std::{
     str::FromStr,
 };
 
-use serde_json::{json, Value};
+use serde_json::{json, Map, Value};
 use vibrato::{tokenizer::worker::Worker, Dictionary, Tokenizer};
 
 use memmap2::Mmap;
@@ -223,7 +223,9 @@ fn do_stuff() -> anyhow::Result<()> {
     setup_logger().unwrap();
     log::info!("Beginning...");
 
-    let dict = PathBuf::from(String::from("./system.dic.zst"));
+    let dict = PathBuf::from(String::from(
+        "./system.dic.zst",
+    ));
     let mut worker = VibratoWorker::create(dict)?;
 
     let mut sin = stdin().lock();
@@ -248,10 +250,13 @@ fn do_stuff() -> anyhow::Result<()> {
                         panic!();
                     });
                     let tokenized = serde_json::to_value(worker.tokenize_lines(text)?)?;
-                    log::info!("Tokens: {tokenized}");
+                    let mut t = Map::new();
+                    t.insert("unidic-mecab-translate".to_string(), tokenized);
+                    let out = json!(t);
+                    log::info!("Tokens: {out}");
                     let res = json!({
                         "sequence": msg["sequence"],
-                        "data": tokenized,
+                        "data": out,
                     });
                     send_message(&mut sout, res)?;
                 }
